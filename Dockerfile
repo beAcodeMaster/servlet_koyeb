@@ -1,23 +1,21 @@
-# 1단계: Maven을 이용해 WAR 파일 자동 빌드
-FROM maven:3.9.2-eclipse-temurin-17 AS build
+# 1단계: Maven을 이용해 프로젝트 빌드
+FROM maven:3.8.6-eclipse-temurin-17 AS build
 WORKDIR /app
-# pom.xml과 소스코드를 컨테이너에 복사
+
+# 프로젝트 파일을 복사
 COPY pom.xml .
-COPY src/ src/
-# 테스트를 건너뛰고 패키징하여 WAR 파일 생성 (target/ex10.war)
-RUN mvn clean package -DskipTests
+RUN mvn dependency:go-offline  # 필요한 의존성 미리 다운로드
 
-# 2단계: Tomcat 컨테이너에 빌드된 WAR 파일 배포
-FROM tomcat:10.1-jdk17
-# Tomcat의 기본 webapps 디렉토리에 WAR 파일 복사
-COPY --from=build /app/target/ex10.war /usr/local/tomcat/webapps/
+COPY src ./src
+RUN mvn clean package -DskipTests  # 테스트를 건너뛰고 빌드
 
-# ✅ Render가 Tomcat을 찾을 수 있도록 환경 변수 설정
-ENV CATALINA_OPTS="-Djava.security.egd=file:/dev/./urandom"
-ENV PORT=8080
+# 2단계: Tomcat 컨테이너에서 실행
+FROM tomcat:10.1.0-jdk17-temurin
+WORKDIR /usr/local/tomcat/webapps/
 
-# ✅ Tomcat이 8080 포트를 노출하도록 설정
+# 빌드된 WAR 파일을 Tomcat에 복사
+COPY --from=build /app/target/ex010.war ROOT.war
+
+# Tomcat 실행
 EXPOSE 8080
-
-# ✅ Tomcat 실행 명령 추가
 CMD ["catalina.sh", "run"]
