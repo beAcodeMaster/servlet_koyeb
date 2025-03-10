@@ -29,15 +29,13 @@ public class APIService {
     }
 
     private APIService() {
-        // 환경 변수 로드 시 오류 처리 추가
-        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
-
-        groqToken = dotenv.get("GROQ_KEY");
+        // 시스템 환경 변수에서 직접 값 가져오기
+        groqToken = System.getenv("GROQ_KEY");
         if (groqToken == null || groqToken.isEmpty()) {
             logger.warning("GROQ_KEY 환경 변수가 설정되지 않았습니다.");
         }
 
-        togetherToken = dotenv.get("TOGETHER_KEY");
+        togetherToken = System.getenv("TOGETHER_KEY");
         if (togetherToken == null || togetherToken.isEmpty()) {
             logger.warning("TOGETHER_KEY 환경 변수가 설정되지 않았습니다.");
         }
@@ -45,8 +43,16 @@ public class APIService {
         // 기본 가이드라인 설정 (환경 변수가 없을 경우 사용)
         String defaultGuide = "당신은 음식을 추천해주는 AI 어시스턴트입니다. 사용자의 요청에 맞는 메뉴를 추천해주세요.";
 
-        groqGuide = dotenv.get("GROQ_GUIDE", defaultGuide);
-        togetherGuide = dotenv.get("TOGETHER_GUIDE", defaultGuide);
+        // 환경 변수가 없을 경우 기본값 사용
+        groqGuide = System.getenv("GROQ_GUIDE");
+        if (groqGuide == null || groqGuide.isEmpty()) {
+            groqGuide = defaultGuide;
+        }
+
+        togetherGuide = System.getenv("TOGETHER_GUIDE");
+        if (togetherGuide == null || togetherGuide.isEmpty()) {
+            togetherGuide = defaultGuide;
+        }
     }
 
     public String callAPI(APIParam apiParam) throws Exception {
