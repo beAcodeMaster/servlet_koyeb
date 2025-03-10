@@ -44,15 +44,9 @@ public class APIService {
         String defaultGuide = "당신은 음식을 추천해주는 AI 어시스턴트입니다. 사용자의 요청에 맞는 메뉴를 추천해주세요.";
 
         // 환경 변수가 없을 경우 기본값 사용
-        groqGuide = System.getenv("GROQ_GUIDE");
-        if (groqGuide == null || groqGuide.isEmpty()) {
-            groqGuide = defaultGuide;
-        }
+        this.groqGuide = (System.getenv("GROQ_GUIDE") != null) ? System.getenv("GROQ_GUIDE") : defaultGuide;
+        this.togetherGuide = (System.getenv("TOGETHER_GUIDE") != null) ? System.getenv("TOGETHER_GUIDE") : defaultGuide;
 
-        togetherGuide = System.getenv("TOGETHER_GUIDE");
-        if (togetherGuide == null || togetherGuide.isEmpty()) {
-            togetherGuide = defaultGuide;
-        }
     }
 
     public String callAPI(APIParam apiParam) throws Exception {
