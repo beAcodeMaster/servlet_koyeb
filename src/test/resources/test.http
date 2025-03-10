@@ -1,0 +1,6 @@
+GET http://localhost:8080/my_app/api?prompt=점메추&model=gpt
+Accept: application/json
+
+<> 2025-03-10T123541.200.json
+<> 2025-03-10T123503.404.html
+<> 2025-03-10T123447.404.html

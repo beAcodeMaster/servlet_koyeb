@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>메뉴 추천기</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- 구글 폰트 추가 (CookieRun-Regular과 어울리는 서체) -->
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'CookieRun-Regular';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/CookieRun-Regular.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+        /* 기본 폰트 및 레이아웃 설정 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'CookieRun-Regular', 'Nanum Gothic', serif;
+            background: linear-gradient(135deg, #f9f9f9, #e0e0e0);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        h1 {
+            margin-bottom: 1rem;
+            color: #333;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .container {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 2rem;
+            width: 100%;
+            max-width: 500px;
+        }
+        #response {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #f0f0f0;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #555;
+            min-height: 3rem;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        form select, form input {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        form select:focus, form input:focus {
+            outline: none;
+            border-color: #0077cc;
+        }
+        button {
+            padding: 0.7rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button[type="submit"] {
+            background-color: #0077cc;
+            color: #fff;
+        }
+        button[type="submit"]:hover {
+            background-color: #005fa3;
+        }
+        #randomBtn {
+            background-color: #28a745;
+            color: #fff;
+        }
+        #randomBtn:hover {
+            background-color: #218838;
+        }
+        /* 리셋 버튼 추가 */
+        #resetBtn {
+            background-color: #dc3545;
+            color: #fff;
+        }
+        #resetBtn:hover {
+            background-color: #c82333;
+        }
+        /* 반응형 처리 */
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>메뉴 추천기</h1>
+    <div id="response">여기에 결과가 표시됩니다</div>
+    <form id="controller">
+        <div>
+            <select id="model">
+                <option value="GROQ">GROQ</option>
+                <option value="TOGETHER">TOGETHER</option>
+            </select>
+        </div>
+        <div>
+            <input id="people" type="number" placeholder="인원 수 (필수)" required>
+        </div>
+        <div>
+            <select id="foodType">
+                <option value="">음식 종류 선택</option>
+                <option value="한식">한식</option>
+                <option value="일식">일식</option>
+                <option value="중식">중식</option>
+                <option value="양식">양식</option>
+            </select>
+        </div>
+        <div>
+            <select id="main">
+                <option value="">메인 선택</option>
+                <option value="밥">밥</option>
+                <option value="빵">빵</option>
+                <option value="면">면</option>
+            </select>
+        </div>
+        <div>
+            <select id="soup">
+                <option value="">국물 여부</option>
+                <option value="유">있음</option>
+                <option value="무">없음</option>
+            </select>
+        </div>
+        <div>
+            <select id="spicyLevel">
+                <option value="">맵기 정도</option>
+                <option value="상">매움</option>
+                <option value="중">보통</option>
+                <option value="하">안 매움</option>
+            </select>
+        </div>
+        <div>
+            <input id="notEat" placeholder="못 먹는 음식 (쉼표로 구분)">
+        </div>
+        <div>
+            <select id="diet">
+                <option value="">다이어트 여부</option>
+                <option value="하는 중">하는 중</option>
+                <option value="아님">아님</option>
+            </select>
+        </div>
+        <div>
+            <input id="specialNotes" placeholder="기타 특이사항">
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <button type="button" id="randomBtn">랜덤 추천</button>
+            <button type="button" id="resetBtn">초기화</button>
+        </div>
+        <button type="submit">추천 받기</button>
+    </form>
+</div>
+
+<script>
+    // API 호출 및 결과 출력
+    document.querySelector("#controller").addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const people = parseInt(document.querySelector("#people").value, 10);
+        const foodType = document.querySelector("#foodType").value;
+        const main = document.querySelector("#main").value;
+        const soup = document.querySelector("#soup").value;
+        const spicyLevel = document.querySelector("#spicyLevel").value;
+        const notEat = document.querySelector("#notEat").value.split(",").map(e => e.trim()).filter(e => e);
+        const diet = document.querySelector("#diet").value;
+        const specialNotes = document.querySelector("#specialNotes").value;
+        const model = document.querySelector("#model").value;
+        const random = document.querySelector("#randomBtn").dataset.active === "true";
+
+        // 인원 수 검증 (1명 이상)
+        if (isNaN(people) || people < 1) {
+            alert("인원 수는 1명 이상이어야 합니다!");
+            return;
+        }
+
+        const requestData = { people, random, model };
+        if (foodType) requestData.foodType = foodType;
+        if (main) requestData.main = main;
+        if (soup) requestData.soup = soup;
+        if (spicyLevel) requestData.spicyLevel = spicyLevel;
+        if (notEat.length) requestData.notEat = notEat;
+        if (diet) requestData.diet = diet;
+        if (specialNotes) requestData.specialNotes = specialNotes;
+
+        try {
+            const response = await fetch(`./api`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(requestData)
+            });
+
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+            const json = await response.json();
+            document.querySelector("#response").textContent = json.content;
+        } catch (error) {
+            console.error("API 호출 중 오류 발생:", error);
+            document.querySelector("#response").textContent = "오류가 발생했습니다. 다시 시도해주세요.";
+        }
+    });
+
+    // 랜덤 버튼 동작
+    document.querySelector("#randomBtn").addEventListener("click", () => {
+        document.querySelector("#randomBtn").dataset.active = "true";
+        // 랜덤 선택 시 다른 입력값들을 초기화하는 기능도 추가할 수 있습니다.
+        document.querySelector("#foodType").selectedIndex = 0;
+        document.querySelector("#main").selectedIndex = 0;
+        document.querySelector("#soup").selectedIndex = 0;
+        document.querySelector("#spicyLevel").selectedIndex = 0;
+        document.querySelector("#notEat").value = "";
+        document.querySelector("#diet").selectedIndex = 0;
+        document.querySelector("#specialNotes").value = "";
+    });
+
+    // 초기화 버튼 동작
+    document.querySelector("#resetBtn").addEventListener("click", () => {
+        document.querySelector("#controller").reset();
+        document.querySelector("#response").textContent = "여기에 결과가 표시됩니다";
+        document.querySelector("#randomBtn").dataset.active = "false";
+    });
+</script>
+</body>
+</html>
