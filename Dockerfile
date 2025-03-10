@@ -14,7 +14,7 @@ FROM tomcat:10.1.0-jdk17-temurin
 WORKDIR /usr/local/tomcat/webapps/
 
 # 빌드된 WAR 파일을 Tomcat에 복사
-COPY --from=build /app/target/ex010.war ROOT.war
+COPY --from=build /app/target/ex10.war ROOT.war
 
 # Tomcat 실행
 EXPOSE 8080
