@@ -44,14 +44,6 @@
 
   <build>
     <finalName>ex10</finalName>
-    <resources>
-      <resource>
-        <directory>src</directory>
-        <includes>
-          <include>.env</include>
-        </includes>
-      </resource>
-    </resources>
 
     <plugins>
       <!-- ✅ Java 17을 사용하도록 maven-compiler-plugin 설정 추가 -->
