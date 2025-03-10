@@ -1,10 +1,8 @@
 package org.example.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.cdimascio.dotenv.Dotenv;
 import org.example.model.APIParam;
 import org.example.model.ModelResponse;
-import org.example.model.ModelType;
 
 import java.io.IOException;
 import java.net.URI;
