@@ -22,7 +22,7 @@
         }
         body {
             font-family: 'CookieRun-Regular', 'Nanum Gothic', serif;
-            background: linear-gradient(135deg, #f9f9f9, #e0e0e0);
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
@@ -34,94 +34,179 @@
             margin-bottom: 1rem;
             color: #333;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            font-size: 2rem;
         }
         .container {
             background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
             padding: 2rem;
             width: 100%;
             max-width: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
         }
         #response {
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background: #f0f0f0;
-            border-radius: 5px;
+            margin-bottom: 1.5rem;
+            padding: 1.2rem;
+            background: #f8f9fa;
+            border-radius: 10px;
             text-align: center;
-            font-size: 1.1rem;
-            color: #555;
-            min-height: 3rem;
+            font-size: 1.2rem;
+            color: #333;
+            min-height: 3.5rem;
+            border-left: 4px solid #feb47b;
+            transition: all 0.3s ease;
+        }
+        #response.changed {
+            background-color: #fff3cd;
+            border-left-color: #ffc107;
         }
         form {
             display: flex;
             flex-direction: column;
-            gap: 0.8rem;
+            gap: 1rem;
+        }
+        .form-group {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .form-group.highlight {
+            transform: scale(1.03);
         }
         form select, form input {
-            padding: 0.5rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
             font-size: 1rem;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+            background-color: #f8f9fa;
         }
         form select:focus, form input:focus {
             outline: none;
-            border-color: #0077cc;
+            border-color: #ff7e5f;
+            box-shadow: 0 0 0 3px rgba(255,126,95,0.2);
+            background-color: #fff;
+        }
+        /* 선택된 옵션 스타일 */
+        select option:checked {
+            background-color: #ff7e5f;
+            color: white;
+        }
+        .btn-group {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
         }
         button {
-            padding: 0.7rem;
+            padding: 0.8rem;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 1rem;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            font-family: 'CookieRun-Regular', sans-serif;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex: 1;
+        }
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         button[type="submit"] {
-            background-color: #0077cc;
+            background: linear-gradient(to right, #0077cc, #5b86e5);
             color: #fff;
         }
         button[type="submit"]:hover {
-            background-color: #005fa3;
+            background: linear-gradient(to right, #005fa3, #4a75d4);
         }
         #randomBtn {
-            background-color: #28a745;
+            background: linear-gradient(to right, #28a745, #84d38d);
             color: #fff;
+            position: relative;
+            overflow: hidden;
         }
         #randomBtn:hover {
-            background-color: #218838;
+            background: linear-gradient(to right, #218838, #71c077);
         }
-        /* 리셋 버튼 추가 */
+        #randomBtn::after {
+            content: "🎲";
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
         #resetBtn {
-            background-color: #dc3545;
+            background: linear-gradient(to right, #dc3545, #f76e82);
             color: #fff;
         }
         #resetBtn:hover {
-            background-color: #c82333;
+            background: linear-gradient(to right, #c82333, #e4606f);
+        }
+        /* 애니메이션 효과 */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        .shake {
+            animation: shake 0.5s;
+        }
+        /* 모양 추가 */
+        .food-icon {
+            position: absolute;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .icon-1 {
+            top: 20px;
+            right: 20px;
+            font-size: 4rem;
+        }
+        .icon-2 {
+            bottom: 20px;
+            left: 20px;
+            font-size: 3rem;
         }
         /* 반응형 처리 */
         @media (max-width: 600px) {
             .container {
-                padding: 1rem;
+                padding: 1.5rem;
+            }
+            button {
+                padding: 0.7rem;
             }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>메뉴 추천기</h1>
+    <div class="food-icon icon-1">🍜</div>
+    <div class="food-icon icon-2">🍕</div>
+    <h1>🍽️ 메뉴 추천기</h1>
     <div id="response">여기에 결과가 표시됩니다</div>
     <form id="controller">
-        <div>
+        <div class="form-group">
             <select id="model">
                 <option value="GROQ">GROQ</option>
                 <option value="TOGETHER">TOGETHER</option>
             </select>
         </div>
-        <div>
+        <div class="form-group">
             <input id="people" type="number" placeholder="인원 수 (필수)" required>
         </div>
-        <div>
+        <div class="form-group">
             <select id="foodType">
                 <option value="">음식 종류 선택</option>
                 <option value="한식">한식</option>
@@ -130,7 +215,7 @@
                 <option value="양식">양식</option>
             </select>
         </div>
-        <div>
+        <div class="form-group">
             <select id="main">
                 <option value="">메인 선택</option>
                 <option value="밥">밥</option>
@@ -138,14 +223,14 @@
                 <option value="면">면</option>
             </select>
         </div>
-        <div>
+        <div class="form-group">
             <select id="soup">
                 <option value="">국물 여부</option>
                 <option value="유">있음</option>
                 <option value="무">없음</option>
             </select>
         </div>
-        <div>
+        <div class="form-group">
             <select id="spicyLevel">
                 <option value="">맵기 정도</option>
                 <option value="상">매움</option>
@@ -153,20 +238,20 @@
                 <option value="하">안 매움</option>
             </select>
         </div>
-        <div>
+        <div class="form-group">
             <input id="notEat" placeholder="못 먹는 음식 (쉼표로 구분)">
         </div>
-        <div>
+        <div class="form-group">
             <select id="diet">
                 <option value="">다이어트 여부</option>
                 <option value="하는 중">하는 중</option>
                 <option value="아님">아님</option>
             </select>
         </div>
-        <div>
+        <div class="form-group">
             <input id="specialNotes" placeholder="기타 특이사항">
         </div>
-        <div style="display: flex; gap: 0.5rem;">
+        <div class="btn-group">
             <button type="button" id="randomBtn">랜덤 추천</button>
             <button type="button" id="resetBtn">초기화</button>
         </div>
@@ -215,7 +300,12 @@
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
             const json = await response.json();
-            document.querySelector("#response").textContent = json.content;
+            const responseElem = document.querySelector("#response");
+            responseElem.textContent = json.content;
+            responseElem.classList.add("changed");
+            setTimeout(() => {
+                responseElem.classList.remove("changed");
+            }, 1000);
         } catch (error) {
             console.error("API 호출 중 오류 발생:", error);
             document.querySelector("#response").textContent = "오류가 발생했습니다. 다시 시도해주세요.";
@@ -224,15 +314,55 @@
 
     // 랜덤 버튼 동작
     document.querySelector("#randomBtn").addEventListener("click", () => {
+        // 랜덤 버튼 활성화 상태 설정
         document.querySelector("#randomBtn").dataset.active = "true";
-        // 랜덤 선택 시 다른 입력값들을 초기화하는 기능도 추가할 수 있습니다.
-        document.querySelector("#foodType").selectedIndex = 0;
-        document.querySelector("#main").selectedIndex = 0;
-        document.querySelector("#soup").selectedIndex = 0;
-        document.querySelector("#spicyLevel").selectedIndex = 0;
-        document.querySelector("#notEat").value = "";
-        document.querySelector("#diet").selectedIndex = 0;
-        document.querySelector("#specialNotes").value = "";
+
+        // 랜덤으로 선택항목 변경
+        const formGroups = document.querySelectorAll(".form-group");
+
+        // 음식 종류 랜덤 선택
+        const foodTypeSelect = document.querySelector("#foodType");
+        const foodTypeOptions = foodTypeSelect.querySelectorAll("option:not(:first-child)");
+        const randomFoodTypeIndex = Math.floor(Math.random() * foodTypeOptions.length) + 1;
+        foodTypeSelect.selectedIndex = randomFoodTypeIndex;
+        highlightElement(foodTypeSelect.parentElement);
+
+        // 메인 랜덤 선택
+        const mainSelect = document.querySelector("#main");
+        const mainOptions = mainSelect.querySelectorAll("option:not(:first-child)");
+        const randomMainIndex = Math.floor(Math.random() * mainOptions.length) + 1;
+        mainSelect.selectedIndex = randomMainIndex;
+        highlightElement(mainSelect.parentElement);
+
+        // 국물 여부 랜덤 선택
+        const soupSelect = document.querySelector("#soup");
+        const soupOptions = soupSelect.querySelectorAll("option:not(:first-child)");
+        const randomSoupIndex = Math.floor(Math.random() * soupOptions.length) + 1;
+        soupSelect.selectedIndex = randomSoupIndex;
+        highlightElement(soupSelect.parentElement);
+
+        // 맵기 정도 랜덤 선택
+        const spicySelect = document.querySelector("#spicyLevel");
+        const spicyOptions = spicySelect.querySelectorAll("option:not(:first-child)");
+        const randomSpicyIndex = Math.floor(Math.random() * spicyOptions.length) + 1;
+        spicySelect.selectedIndex = randomSpicyIndex;
+        highlightElement(spicySelect.parentElement);
+
+        // 다이어트 여부 랜덤 선택
+        const dietSelect = document.querySelector("#diet");
+        const dietOptions = dietSelect.querySelectorAll("option:not(:first-child)");
+        const randomDietIndex = Math.floor(Math.random() * dietOptions.length) + 1;
+        dietSelect.selectedIndex = randomDietIndex;
+        highlightElement(dietSelect.parentElement);
+
+        // 랜덤 버튼 애니메이션
+        document.querySelector("#randomBtn").classList.add("shake");
+        setTimeout(() => {
+            document.querySelector("#randomBtn").classList.remove("shake");
+        }, 500);
+
+        // 결과 창에 랜덤 선택 표시
+        updateRandomSelectionText();
     });
 
     // 초기화 버튼 동작
@@ -241,6 +371,49 @@
         document.querySelector("#response").textContent = "여기에 결과가 표시됩니다";
         document.querySelector("#randomBtn").dataset.active = "false";
     });
+
+    // 선택된 요소 하이라이트
+    function highlightElement(element) {
+        element.classList.add("highlight");
+        setTimeout(() => {
+            element.classList.remove("highlight");
+        }, 500);
+    }
+
+    // 랜덤 선택 결과 표시
+    function updateRandomSelectionText() {
+        const foodType = document.querySelector("#foodType").options[document.querySelector("#foodType").selectedIndex].text;
+        const main = document.querySelector("#main").options[document.querySelector("#main").selectedIndex].text;
+        const soup = document.querySelector("#soup").options[document.querySelector("#soup").selectedIndex].text;
+        const spicy = document.querySelector("#spicyLevel").options[document.querySelector("#spicyLevel").selectedIndex].text;
+        const diet = document.querySelector("#diet").options[document.querySelector("#diet").selectedIndex].text;
+
+        const selectedOptions = [];
+        if (foodType !== "음식 종류 선택") selectedOptions.push(foodType);
+        if (main !== "메인 선택") selectedOptions.push(main);
+        if (soup !== "국물 여부") selectedOptions.push(soup === "있음" ? "국물O" : "국물X");
+        if (spicy !== "맵기 정도") selectedOptions.push(spicy);
+        if (diet !== "다이어트 여부") selectedOptions.push(diet);
+
+        const emojis = ["🍜", "🍕", "🍔", "🍣", "🍗", "🍚", "🍲", "🍛"];
+        const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+
+        const responseText = selectedOptions.length > 0 ?
+            `${randomEmoji} 랜덤 선택: ${selectedOptions.join(", ")} ${randomEmoji}` :
+            "랜덤 선택이 완료되었습니다!";
+
+        const responseElem = document.querySelector("#response");
+        responseElem.textContent = responseText;
+        responseElem.classList.add("changed");
+        setTimeout(() => {
+            responseElem.classList.remove("changed");
+        }, 1000);
+    }
+
+    // 기본 인원수 설정 (1명)
+    window.onload = function() {
+        document.querySelector("#people").value = 1;
+    };
 </script>
 </body>
 </html>
