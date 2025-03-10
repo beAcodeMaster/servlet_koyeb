@@ -14,7 +14,7 @@ COPY --from=build /app/target/ex10.war /usr/local/tomcat/webapps/
 
 # ✅ Render가 Tomcat을 찾을 수 있도록 환경 변수 설정
 ENV CATALINA_OPTS="-Djava.security.egd=file:/dev/./urandom"
-ENV PORT=8080  # Render에서 자동으로 설정할 수 있도록 지정
+ENV PORT=8080
 
 # ✅ Tomcat이 8080 포트를 노출하도록 설정
 EXPOSE 8080
